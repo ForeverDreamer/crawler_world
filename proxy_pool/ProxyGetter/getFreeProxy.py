@@ -73,7 +73,7 @@ class GetFreeProxy(object):
             driver = webdriver.Chrome(options=chrome_options)
 
             last_page = 1609
-            page_num = 1000
+            page_num = 1
             while page_num <= last_page:
                 driver.get(base_url + str(page_num) + '.html')
                 WebDriverWait(driver, 30).until(ec.title_contains("66免费代理ip"))
