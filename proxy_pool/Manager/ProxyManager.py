@@ -44,7 +44,7 @@ class ProxyManager(object):
             # fetch
             try:
                 self.log.info("{func}: fetch proxy start".format(func=proxyGetter))
-                for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
+                for proxy in getattr(GetFreeProxy, proxyGetter.strip())(self.get()):
                     # 直接存储代理, 不用在代码中排重, hash 结构本身具有排重功能
                     proxy = proxy.strip()
                     if proxy and verifyProxyFormat(proxy):

@@ -1,5 +1,4 @@
 import requests
-import time
 from bs4 import BeautifulSoup
 import re
 
@@ -10,7 +9,7 @@ try:
     proxies = {
         prot: '{}://{}:{}'.format(prot, ip, port)
     }
-    r = requests.get(url, proxies=proxies, timeout=10, verify=False)
+    r = requests.get(url, proxies=None, timeout=10, verify=False)
     soup = BeautifulSoup(r.text, 'lxml')
 
     http_x_forwarded_for = re.findall(r'\d+.\d+.\d+.\d+', str(soup.find("h4")))

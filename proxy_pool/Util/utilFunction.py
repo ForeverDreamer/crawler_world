@@ -62,30 +62,17 @@ def verifyProxyFormat(proxy):
 
 
 # noinspection PyPep8Naming
-def getHtmlTree(url, **kwargs):
-    """
-    获取html树
-    :param url:
-    :param kwargs:
-    :return:
-    """
-
-    header = {'Connection': 'keep-alive',
-              'Cache-Control': 'max-age=0',
-              'Upgrade-Insecure-Requests': '1',
-              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko)',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-              'Accept-Encoding': 'gzip, deflate, sdch',
-              'Accept-Language': 'zh-CN,zh;q=0.8',
-              }
+def getHtmlTree(url, proxy_ip):
     # TODO 取代理服务器用代理服务器访问
     wr = WebRequest()
-
     # delay 2s for per request
     time.sleep(2)
 
-    html = wr.get(url=url, header=header).text
-    # return etree.HTML(html)
+    # ip, port, prot = proxy_ip.split(':')
+    # proxies = {prot: '{}://{}:{}'.format(prot, ip, port)}
+    #
+    html = wr.get(url, proxies=None).text
+
     return BeautifulSoup(html, features='lxml')
 
 
@@ -152,6 +139,6 @@ def validUsefulProxy(proxy):
                                                                                        ip == remote_addr))
             return True
     except Exception as e:
-        print(e)
+        pass
 
     return False

@@ -14,7 +14,9 @@
 import re
 import sys
 import requests
+import random
 
+from Util.user_agents import ua_list
 from Util.WebRequest import WebRequest
 from Util.utilFunction import getHtmlTree, extract_ip
 
@@ -37,12 +39,10 @@ class GetFreeProxy(object):
     proxy getter
     """
     @staticmethod
-    def freeProxyFirst(page=10):
+    def freeProxyFirst(proxy_ip):
         """
         无忧代理 http://www.data5u.com/
         几乎没有能用的
-        :param page: 页数
-        :return:
         """
         url_list = [
             'http://www.data5u.com/',
@@ -50,24 +50,30 @@ class GetFreeProxy(object):
             'http://www.data5u.com/free/gnpt/index.shtml'
         ]
         for url in url_list:
-            soup = getHtmlTree(url)
+            soup = getHtmlTree(url, proxy_ip)
             ip_list = soup.find_all('ul', {"class": "l2"})
             for info in ip_list:
                 yield extract_ip(str(info))
 
     @staticmethod
-    def freeProxySecond(count=20):
+    def freeProxySecond(proxy_ip):
         base_url = "http://www.66ip.cn/"
 
         try:
-            # instantiate a chrome options object so you can set the size and headless preference
+            # 设置参数选项
             chrome_options = Options()
             chrome_options.add_argument("--headless")
-            # chrome_options.add_argument("--window-size=1920x1080")
+            # proxy_ip = "186.24.11.165:8080"
+            # ip, port = proxy_ip.split(':')
+            # proxy_ip = '{}:{}'.format(ip, port)
+            user_agent = random.choice(ua_list)
+            # chrome_options.add_argument('--proxy-server=' + proxy_ip)
+            chrome_options.add_argument("--user-agent=" + user_agent)
+
             driver = webdriver.Chrome(options=chrome_options)
 
             last_page = 1609
-            page_num = 1
+            page_num = 1000
             while page_num <= last_page:
                 driver.get(base_url + str(page_num) + '.html')
                 WebDriverWait(driver, 30).until(ec.title_contains("66免费代理ip"))
@@ -77,7 +83,8 @@ class GetFreeProxy(object):
                 for info in ip_list:
                     yield extract_ip(str(info))
                 page_num += 1
-
+        except Exception as e:
+            print(e)
         finally:
             driver.close()
 
@@ -306,7 +313,7 @@ class GetFreeProxy(object):
 
 
 if __name__ == '__main__':
-    from CheckProxy import CheckProxy
+    from .CheckProxy import CheckProxy
 
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFirst)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySecond)
