@@ -45,7 +45,7 @@ DATABASES = {
 
 PROXY_GETTER = [
     "freeProxyFirst",
-    # "freeProxySecond",
+    "freeProxySecond",
     # "freeProxyFourth",
     # "freeProxySeventh",
     # "freeProxyTen",
