@@ -18,7 +18,7 @@ for cur_dir_path, sub_dirs, cur_dir_files in os.walk(ROOT_DIR):
                 with open(file_path, 'rt') as fr:
                     with open(TARGET_FILE, 'at') as fw:
                         for line in fr.readlines():
-                            fw.write("\t\'" + line.strip() + "\'\n")
+                            fw.write("\t\'" + line.strip() + "\',\n")
             except Exception as e:
                 print(e)
 

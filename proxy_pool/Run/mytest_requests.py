@@ -33,7 +33,7 @@ try:
                                                                                 remote_addr,
                                                                                 ip,
                                                                                 ip == remote_addr))
-    print(soup.find('div').get_text())
     print(soup.find('span').get_text())
+    print(soup.find('div').get_text())
 except Exception as e:
     print(e)

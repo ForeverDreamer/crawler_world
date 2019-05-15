@@ -106,7 +106,7 @@ class GetFreeProxy(object):
             pass
 
     @staticmethod
-    def freeProxyFourth(page_count=1):
+    def freeProxyFourth(proxy_ip):
         """
         西刺代理 http://www.xicidaili.com
         :return:
@@ -115,21 +115,21 @@ class GetFreeProxy(object):
             'http://www.xicidaili.com/nn/',  # 高匿
             'http://www.xicidaili.com/nt/',  # 透明
         ]
-        last_page = 3674
+        last_page = 200
         page_num = 1
         for url in url_list:
             while page_num <= last_page:
                 url = url + str(page_num)
-                soup = getHtmlTree(url)
+                soup = getHtmlTree(url, proxy_ip)
                 ip_list = soup.find_all('tr')
                 for info in ip_list:
                     yield extract_ip(str(info))
             else:
-                last_page = 729
+                # last_page = 729
                 page_num = 1
 
     @staticmethod
-    def freeProxyFifth():
+    def freeProxyFifth(proxy_ip):
         """
         guobanjia http://www.goubanjia.com/
         :return:

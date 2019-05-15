@@ -39,16 +39,17 @@ class ProxyManager(object):
         fetch proxy into Db by ProxyGetter/getFreeProxy.py
         :return:
         """
-        self.db.changeTable(self.raw_proxy_queue)
         for proxyGetter in config.proxy_getter_functions:
             # fetch
             try:
                 self.log.info("{func}: fetch proxy start".format(func=proxyGetter))
-                for proxy in getattr(GetFreeProxy, proxyGetter.strip())(self.get()):
+                # for proxy in getattr(GetFreeProxy, proxyGetter.strip())(self.get()):
+                for proxy in getattr(GetFreeProxy, proxyGetter.strip())(None):
                     # 直接存储代理, 不用在代码中排重, hash 结构本身具有排重功能
                     proxy = proxy.strip()
                     if proxy and verifyProxyFormat(proxy):
                         self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
+                        self.db.changeTable(self.raw_proxy_queue)
                         self.db.put(proxy)
                     else:
                         self.log.error('{func}: fetch proxy {proxy} error'.format(func=proxyGetter, proxy=proxy))

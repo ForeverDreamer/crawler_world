@@ -56,7 +56,7 @@ def verifyProxyFormat(proxy):
     :return:
     """
     import re
-    verify_regex = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}:https?"
+    verify_regex = r"https?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}"
     _proxy = re.findall(verify_regex, proxy)
     return True if len(_proxy) == 1 and _proxy[0] == proxy else False
 
@@ -91,7 +91,7 @@ def extract_ip(ip_info):
     else:
         protocol = 'http'
 
-    return "{}:{}:{}".format(ip, port, protocol)
+    return "{}:{}:{}".format(protocol, ip, port)
 
 
 # noinspection PyPep8Naming
@@ -121,7 +121,7 @@ def extract_ip(ip_info):
 
 def validUsefulProxy(proxy):
     url = "http://crawleruniverse.com:8000/ct/ri"  # 查自己的ip
-    ip, port, prot = proxy.split(':')
+    prot, ip, port = proxy.split(':')
 
     try:
         proxies = {
@@ -139,6 +139,7 @@ def validUsefulProxy(proxy):
                                                                                        ip == remote_addr))
             return True
     except Exception as e:
-        pass
+        # pass
+        print(e)
 
     return False
