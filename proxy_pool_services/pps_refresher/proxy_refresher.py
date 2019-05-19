@@ -14,14 +14,13 @@ sys.path.append('..')
 # logging.basicConfig()
 
 
-class ProxyRefreshSchedule(ProxyManager):
+class ProxyRefresher:
     """
     代理定时刷新
     """
-
     def __init__(self):
-        ProxyManager.__init__(self)
-        self.log = LogHandler('refresh_schedule')
+        self._pm = ProxyManager()
+        self.log = LogHandler('proxy_refresher')
 
     def fetch_all_proxy(self):
         """
@@ -38,8 +37,8 @@ class ProxyRefreshSchedule(ProxyManager):
                     proxy = proxy.strip()
                     if proxy and verify_proxy_format(proxy):
                         self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
-                        self.db.change_table(self.raw_proxy_queue)
-                        self.db.put(proxy)
+                        self._pm.db.change_table(self._pm.raw_proxy_queue)
+                        self._pm.db.put(proxy)
                     else:
                         self.log.error('{func}: fetch proxy {proxy} error'.format(func=proxyGetter, proxy=proxy))
                         pass
@@ -52,26 +51,26 @@ class ProxyRefreshSchedule(ProxyManager):
         验证raw_proxy_queue中的代理, 将可用的代理放入useful_proxy_queue
         :return:
         """
-        self.db.change_table(self.raw_proxy_queue)
-        raw_proxy = self.db.pop()
-        self.log.info('ProxyRefreshSchedule: %s start validProxy' % time.ctime())
+        self._pm.db.change_table(self._pm.raw_proxy_queue)
+        raw_proxy = self._pm.db.pop()
+        self.log.info('ProxyRefresher: %s start validProxy' % time.ctime())
         # 计算剩余代理，用来减少重复计算
-        remaining_proxies = self.get_all()
+        remaining_proxies = self._pm.get_all()
         while raw_proxy:
             if (raw_proxy not in remaining_proxies) and valid_useful_proxy(raw_proxy):
-                self.db.change_table(self.useful_proxy_queue)
-                self.db.put(raw_proxy)
-                self.log.info('ProxyRefreshSchedule: %s validation pass' % raw_proxy)
+                self._pm.db.change_table(self._pm.useful_proxy_queue)
+                self._pm.db.put(raw_proxy)
+                self.log.info('ProxyRefresher: %s validation pass' % raw_proxy)
             else:
-                self.log.info('ProxyRefreshSchedule: %s validation fail' % raw_proxy)
-            self.db.change_table(self.raw_proxy_queue)
-            raw_proxy = self.db.pop()
-            remaining_proxies = self.get_all()
-        self.log.info('ProxyRefreshSchedule: %s validProxy complete' % time.ctime())
+                self.log.info('ProxyRefresher: %s validation fail' % raw_proxy)
+            self._pm.db.change_table(self._pm.raw_proxy_queue)
+            raw_proxy = self._pm.db.pop()
+            remaining_proxies = self._pm.get_all()
+        self.log.info('ProxyRefresher: %s validProxy complete' % time.ctime())
 
 
 def refresh_pool():
-    pp = ProxyRefreshSchedule()
+    pp = ProxyRefresher()
     pp.validate_raw_proxy()
 
 
@@ -91,7 +90,7 @@ def multi_thread_validate(process_num=50):
 
 
 def fetch_all_proxy():
-    p = ProxyRefreshSchedule()
+    p = ProxyRefresher()
     p.fetch_all_proxy()
 
 
