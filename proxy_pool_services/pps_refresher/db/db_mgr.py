@@ -1,7 +1,12 @@
 from config.config_getter import config
 from util.util_class import Singleton
-from .redis_client import RedisClient
-from .mongodb_cient import MongodbClient
+from .redis_mgr import RedisClient
+from .mongo_mgr import MongodbClient
+from importlib import import_module
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
 class DbClient:
@@ -26,7 +31,7 @@ class DbClient:
 
         所有方法需要相应类去具体实现：
             SSDB：SsdbClient.py
-            REDIS:redis_client.py  停用 统一使用SsdbClient.py
+            REDIS:redis_mgr.py  停用 统一使用SsdbClient.py
 
     """
 
@@ -37,19 +42,12 @@ class DbClient:
         self._init_dbclient()
 
     def _init_dbclient(self):
-        _dbtype = None
-        if "REDIS" == config.db_type:
-            _dbtype = RedisClient
-        elif "MONGODB" == config.db_type:
-            _dbtype = MongodbClient
-        else:
-            pass
+        db_module = getattr(__import__('{}_mgr'.format(config.db_type)), '{}Client'.format(config.db_type.capitalize()))
 
-        assert _dbtype, 'Type error, not support DB type: {}'.format(config.db_type)
-        self.client = _dbtype(name=config.db_name,
-                              host=config.db_host,
-                              port=config.db_port,
-                              password=config.db_password)
+        self.client = db_module(name=config.db_name,
+                                host=config.db_host,
+                                port=config.db_port,
+                                password=config.db_password)
 
     def get(self, key, **kwargs):
         return self.client.get(key, **kwargs)

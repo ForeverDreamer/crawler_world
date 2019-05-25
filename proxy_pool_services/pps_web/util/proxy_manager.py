@@ -1,5 +1,5 @@
 import random
-from db.db_client import DbClient
+from db.db_mgr import DbClient
 # from Util.LogHandler import LogHandler
 
 
@@ -20,9 +20,9 @@ class ProxyManager:
         :return:
         """
         self.db.change_table(self.useful_proxy_queue)
-        item_dict = self.db.get_all()
-        if item_dict:
-            return random.choice(list(item_dict.keys()))
+        item_list = self.db.get_all()
+        if item_list:
+            return random.choice(item_list)
         return None
 
     def delete(self, proxy):
@@ -40,9 +40,9 @@ class ProxyManager:
         :return:
         """
         self.db.change_table(self.useful_proxy_queue)
-        item_dict = self.db.get_all()
+        item_list = self.db.get_all()
 
-        return list(item_dict.keys()) if item_dict else list()
+        return item_list if item_list else list()
 
     def get_number(self):
         self.db.change_table(self.raw_proxy_queue)

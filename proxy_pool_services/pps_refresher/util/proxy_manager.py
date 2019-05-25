@@ -1,5 +1,5 @@
 import random
-from db.db_client import DbClient
+from db.db_mgr import DbClient
 # from Util.LogHandler import LogHandler
 
 

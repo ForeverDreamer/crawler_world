@@ -5,12 +5,12 @@ class ConfigError(BaseException):
     pass
 
 
-DB_TYPE = getenv('DB_TYPE', 'REDIS')
+DB_TYPE = getenv('DB_TYPE', 'redis')
 
-if DB_TYPE == 'REDIS':
+if DB_TYPE == 'redis':
     DB_HOST = getenv('REDIS_HOST', '192.168.49.135')
     DB_PORT = getenv('REDIS_PORT', '6379')
-elif DB_TYPE == 'MONGODB':
+elif DB_TYPE == 'mongodb':
     DB_HOST = getenv('MONGODB_HOST', '127.0.0.1')
     DB_PORT = getenv('MONGODB_PORT', '27017')
 else:
